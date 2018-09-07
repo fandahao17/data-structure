@@ -1,7 +1,13 @@
-#include <stdio.h>
+#include "iostream"
 
 int main(int argc, char *argv[])
 {
-	printf("Hello Data Structure!\n");
-	return 0;
+  std::cout << "Hello cpp" << std::endl;
+  /* The two ways to print is equal.
+   * 'endl' is a manipulator, it ends the current line and lushes the buffer.
+   */
+  std::cout << "Hello cpp";
+  std::cout << std::endl;
+
+  return 0;
 }
