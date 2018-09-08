@@ -13,7 +13,6 @@ int main(){
   for (auto &item : s) {
     cout << item;
   }
-  cout << std::endl;
   for (decltype(s.size()) i = 0; i < s.size(); ++i) {
     // It is terrible that TOUPPER actually returns an integer.
     s[i] = toupper(s[i]);

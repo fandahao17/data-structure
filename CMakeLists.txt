@@ -7,3 +7,4 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_executable(TryString TryString.cpp)
 add_executable(Hello Hello.cpp)
+add_executable(Debugging Debugging.cpp)
