@@ -12,7 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-driver = webdriver.Chrome()
+driver = webdriver.Safari()
 # TODO: waiting for the page to load wastes time, may try parallel.
 driver.get('http://pythontutor.com/visualize.html#mode=edit')
 try:
