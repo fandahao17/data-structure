@@ -41,7 +41,7 @@
 // Don't forget gtest.h, which declares the testing framework.
 
 #include <limits.h>
-#include "sample1.h"
+#include "../src/sample1.h"
 #include "gtest/gtest.h"
 namespace {
 
@@ -103,7 +103,7 @@ TEST(FactorialTest, Zero) {
 
 // Tests factorial of positive numbers.
 TEST(FactorialTest, Positive) {
-  EXPECT_EQ(3, Factorial(1));
+  EXPECT_EQ(1, Factorial(1));
   EXPECT_EQ(2, Factorial(2));
   EXPECT_EQ(6, Factorial(3));
   EXPECT_EQ(40320, Factorial(8));

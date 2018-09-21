@@ -18,7 +18,8 @@ TARGET = sample1
 GTEST_DIR = ./gtest
 
 # Where to find user code.
-USER_DIR = ./src
+SRC_DIR = ./src
+TEST_DIR = ./test
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
@@ -30,7 +31,7 @@ CXXFLAGS += -g -Wall -Wextra -pthread
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = sample1_unittest
+TESTS = $(TARGET)_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -73,12 +74,12 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-sample1.o : $(USER_DIR)/sample1.cc $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1.cc -o $(addprefix build/,$@)
+$(TARGET).o : $(SRC_DIR)/$(TARGET).cpp $(SRC_DIR)/$(TARGET).h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/$(TARGET).cpp -o $(addprefix build/,$@)
 
-sample1_unittest.o : $(USER_DIR)/sample1_unittest.cc \
-                     $(USER_DIR)/sample1.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/sample1_unittest.cc -o $(addprefix build/,$@)
+$(TARGET)_test.o : $(TEST_DIR)/$(TARGET)_test.cpp \
+                     $(SRC_DIR)/$(TARGET).h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/$(TARGET)_test.cpp -o $(addprefix build/,$@)
 
-sample1_unittest : sample1.o sample1_unittest.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(addprefix build/,$^) -o $(addprefix bin/,$@)
+$(TARGET)_test : $(TARGET).o $(TARGET)_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(addprefix build/,$^) -o $(addprefix bin/,test)
