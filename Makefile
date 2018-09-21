@@ -24,6 +24,7 @@ TEST_DIR = ./test
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
+CXX = g++-8
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
@@ -74,11 +75,11 @@ gtest_main.a : gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-$(TARGET).o : $(SRC_DIR)/$(TARGET).cpp $(SRC_DIR)/$(TARGET).h $(GTEST_HEADERS)
+$(TARGET).o : $(SRC_DIR)/$(TARGET).cpp $(SRC_DIR)/$(TARGET).hpp $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/$(TARGET).cpp -o $(addprefix build/,$@)
 
 $(TARGET)_test.o : $(TEST_DIR)/$(TARGET)_test.cpp \
-                     $(SRC_DIR)/$(TARGET).h $(GTEST_HEADERS)
+                     $(SRC_DIR)/$(TARGET).hpp $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/$(TARGET)_test.cpp -o $(addprefix build/,$@)
 
 $(TARGET)_test : $(TARGET).o $(TARGET)_test.o gtest_main.a
