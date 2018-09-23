@@ -12,7 +12,7 @@
 # project, except GTEST_HEADERS, which you can use in your own targets
 # but shouldn't modify.
 
-TARGET = sample1
+TARGET = list_sq
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
 GTEST_DIR = ./gtest
@@ -28,7 +28,7 @@ CXX = g++-8
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra -pthread
+CXXFLAGS += -g -Wall -Wextra -pthread -gdwarf-3
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
@@ -83,4 +83,4 @@ $(TARGET)_test.o : $(TEST_DIR)/$(TARGET)_test.cpp \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/$(TARGET)_test.cpp -o $(addprefix build/,$@)
 
 $(TARGET)_test : $(TARGET).o $(TARGET)_test.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $(addprefix build/,$^) -o $(addprefix bin/,test)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS)  $(addprefix build/,$^) -lpthread -o $(addprefix bin/,test)
