@@ -16,7 +16,7 @@ void destroy_list(List &l) {
 
 // a helper function.
 void resize_list(List &l, int size) {
-	l.data = static_cast<int *>(realloc(l.data, size * sizeof(int)));
+	l.data = static_cast<int *>(realloc(l.data, size));
 	l.size = size;
 }
 
