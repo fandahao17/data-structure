@@ -10,7 +10,6 @@ struct node;
 typedef struct node{
 	node *prev;
 	Item item; 
-	int freq;
 	node *next;
 } node;
 
@@ -37,4 +36,7 @@ int list_insert(List &l, int i, Item e);
 
 int list_delete(List &l, int i, Item &e);
 
+node *add_after(node *dest, node *p);
+
+node* remove_node(node *p);
 #endif /* ifndef LINKED */

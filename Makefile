@@ -82,4 +82,4 @@ $(TARGET)_test.o : $(TEST_DIR)/$(TARGET)_test.cpp \
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(TEST_DIR)/$(TARGET)_test.cpp -o $(addprefix build/,$@)
 
 $(TARGET)_test : $(TARGET).o $(TARGET)_test.o 
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS)  $(addprefix build/,$^) build/catch.o -o $(addprefix bin/,test)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS)  $(addprefix build/,$^) build/Linkedlist.o build/catch.o -o $(addprefix bin/,test)

@@ -19,7 +19,7 @@ node *add_after(node *dest, node *p) {
 
 void init_list(List &l){
 	l.sentinel = (node *)malloc(sizeof(node));
-	l.sentinel->item = {233};
+	l.sentinel->item = {133, 233};
 	l.sentinel->next = l.sentinel->prev = l.sentinel;
 	l.size = 0;
 }
@@ -57,20 +57,19 @@ int get_elem(List l, int i, Item &e) {
 	return 0;
 }
 
+/*
 void resort(List l, node *p) {
 	node *q = p->prev;
 	while (q != l.sentinel && q->freq < p->freq) {
 		q = q->prev;
 	}
 	add_after(q, remove_node(p));
-}
+} */
 
 int locate_elem(List l, Item e) {
 	int i = 0;
 	for(node *p = l.sentinel->next; p != l.sentinel; p = p->next, i++) {
-		if (p->item.data == e.data) {
-			p->freq++;
-			resort(l, p);
+		if (p->item.power == e.power && p->item.coefficient == e.coefficient) {
 			return i;
 		}
 	}
@@ -93,7 +92,6 @@ int list_insert(List &l, int i, Item e) {
 	return 0;
 }
 	
-
 int list_delete(List &l, int i, Item &e) {
 	if (i < 0 || i > l.size) {
 		return -1;
