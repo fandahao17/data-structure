@@ -2,16 +2,16 @@
 #include "../src/polynomial.hpp"
 
 SCENARIO("Dealing with a Polynomial") {
-	WHEN("Init a Polynomial with arg 0.") {
+	WHEN("Init a Polynomial.") {
 		THEN("It should be a 0 Polynomial.") {
-			Polynomial p = polynomial("0");
+			Polynomial p = polynomial("0.3");
 			print_polynomial(p);
 		}
 	}
 
 	WHEN("Init a normal Polynomial.") {
 		THEN("It should print it properly.") {
-			Polynomial p = polynomial("3x^2+x+1");
+			Polynomial p = polynomial("3.4x^2+x+1.5");
 			print_polynomial(p);
 		}
 	}
@@ -37,33 +37,24 @@ SCENARIO("Dealing with a Polynomial") {
 		}
 	}
 
-	/*
-	WHEN("Init a Polynomial with negative power.") {
-		THEN("It should sort it properly.") {
-			Polynomial p = polynomial("-3+7x^(-3)+2+12x^(-2)");
-			print_polynomial(p);
-		}
-	}
-	*/
-
 	WHEN("Adding two Polynomials") {
 		THEN("It should print it correctly") {
-			print_polynomial(add(polynomial("x^3+2x"), polynomial("x^2+1")));
-			print_polynomial(polynomial("x^3+x^2+2x+1"));
-			print_polynomial(add(polynomial("3x^3+2x^2+x+3"), polynomial("x^2+1")));
-			print_polynomial(polynomial("3x^3+3x^2+x+4"));
+			print_polynomial(add(polynomial("1.5x^3+2x"), polynomial("x^2+1")));
+			print_polynomial(polynomial("1.5x^3+x^2+2x+1"));
+			print_polynomial(add(polynomial("3x^3+2.3x^2+x+3"), polynomial("x^2+1")));
+			print_polynomial(polynomial("3x^3+3.3x^2+x+4"));
 			print_polynomial(sub(polynomial("3x^3+2x^2+x+3"), polynomial("x^2+1")));
 			print_polynomial(polynomial("3x^3+x^2+x+2"));
-			print_polynomial(sub(polynomial("x^2+2"), polynomial("x^2+1")));
+			// subtract
+			print_polynomial(sub(polynomial("x^2+2"), polynomial("x^2+2")));
 			print_polynomial(polynomial("0"));
 		}
 	}
 
 	WHEN("Multiplying two Polynomials.") {
 		THEN("It should print it correctly") {
-			print_polynomial(mul(polynomial("x^3+2x"), polynomial("3x^2")));
+			print_polynomial(mul(polynomial("x^3+2x"), polynomial("3.1x^2")));
 			print_polynomial(mul(polynomial("x^3+2x"), polynomial("3x^2+3x^4+5")));
 		}
 	}
-
 }

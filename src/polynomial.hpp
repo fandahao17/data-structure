@@ -1,18 +1,18 @@
 #include "LinkedList.hpp"
 #include <string>
 
+#define first(p) p.sentinel->next
+#define head(p) p.sentinel
+#define isHead(p, t) t == head(p)
+#define next(p) p->next
+#define coefficient(t) t->item.coefficient
+#define power(t) t->item.power
+#define remove(t) remove_node(t)
+
 typedef List Polynomial;
 typedef node* Term;
 
-static inline int get_coefficient(Term t) {
-	return t->item.coefficient;
-}
-
-static inline int get_power(Term t) {
-	return t->item.power;
-}
-
-static inline Term set_coefficient(Term t, int i) {
+static inline Term set_coefficient(Term t, double i) {
 	t->item.coefficient = i;
 	return t;
 }
@@ -20,14 +20,6 @@ static inline Term set_coefficient(Term t, int i) {
 static inline Term set_power(Term t, int i) {
 	t->item.power = i;
 	return t;
-}
-
-static inline Term next(Term t) {
-	return t->next;
-}
-
-static inline Term first(Polynomial p) {
-	return p.sentinel->next;
 }
 
 Polynomial polynomial(const std::string str);

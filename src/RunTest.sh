@@ -1,3 +1,4 @@
+# TODO: run without input and output files.
 test ! -e "input" -o ! -e "answer" && \
 	echo "Run: Can't find input or answer file" && exit 0
 filename=$(head -n 1 input | cut -d ' ' -f 2)

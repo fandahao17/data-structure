@@ -1,8 +1,9 @@
 // A doubly linked list with a sentinel node.
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H 
+
 typedef struct Item{
-	int coefficient; 
+	double coefficient; 
 	int power;
 } Item;
 
@@ -17,7 +18,6 @@ typedef struct List {
 	node *sentinel;
 	int size;	
 } List;
-
 
 void init_list(List &l);
 

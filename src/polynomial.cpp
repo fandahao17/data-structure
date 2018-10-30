@@ -1,102 +1,134 @@
 #include "polynomial.hpp"
-#include <iostream>
 #include <cctype>
+#include <iostream>
+#include <cmath>
+#include <sstream>
 
-Polynomial poly_insert(Polynomial &p, Item new_item) {
-	// TODO: Don't directly access Linkedlist nodes.
-	// may use term instead of node, coefficient(), power(). 
-	// TODO: Hide the ugly sentinel node.
-	// may use it to store some information.
-	// may use first() to access the first term in the list.
-	node *q = p.sentinel;
+static int size(Polynomial p) {
 	int i = 0;
-	while (q->next != p.sentinel && q->next->item.power>new_item.power) {
-		q = q->next;
+	for(Term t = first(p); t != head(p); t = next(t)) {
 		i++;
 	}
-	if (q->next->item.power == new_item.power) {
-		q->next->item.coefficient += new_item.coefficient;
-	} else {
-		// TODO: use better insert and remove methods.
-		list_insert(p, i, new_item);
-	}
-	if (q->next->item.coefficient == 0) {
-		if (p.size == 1) {
-			q->next->item.power = 0;
-		} else {
-			remove_node(q->next);
-			p.size -= 1;
+	return i;
+}
+
+static Polynomial filtered_poly (Polynomial p) {
+	Term t = first(p);
+	while (!(isHead(p, t))) {
+		Term n = next(t);
+		if (coefficient(t) == 0 && power(t) != 0) {
+			remove(t);
 		}
+		t = n;
 	}
 	return p;
+}
+
+static void insert_term_at(Polynomial p, Term dest, Term src) {
+	if (!(isHead(p, dest)) && power(dest) == power(src)) {
+		set_coefficient(dest, coefficient(dest) + coefficient(src));
+		src = dest;
+	} else {
+		add_after(dest->prev, src);
+	}
+}
+
+static Term term(double coefficient, int power) {
+	Term t = (Term) malloc(sizeof(node));
+	set_coefficient(t, coefficient);
+	set_power(t, power);
+	return t;
+}
+
+Polynomial poly_insert(Polynomial p, Item new_item) {
+	Term new_term = term(new_item.coefficient, new_item.power);
+	Term t = first(p);
+	while (t != head(p) && power(t) > power(new_term)) {
+		t = next(t);
+	}
+	insert_term_at(p, t, new_term);
+	return filtered_poly(p);
 }
 
 Polynomial polynomial(const std::string str) {
 	Polynomial p;
 	init_list(p);
-	std::string new_str = str;
-	// TODO: use string stream instead.
+	if (str.empty()) {
+		return p;
+	} 
+	std::stringstream s;
 	if(str.at(0) != '-') {
-		new_str.insert(0, "+");
+		s << "+" << str;
+	}else {
+		s << str;
 	}
 	
-	decltype(new_str.length()) pos = 0;
-	while (pos != new_str.length()) {
-		char sign = 0;
-		sign = new_str.at(pos++);
-		int coeffient = (new_str.at(pos) == 'x' ? 1 : 0), power = 0;
-		while (pos != new_str.length() && (isnumber(new_str.at(pos)) != 0)) {
-			coeffient = coeffient * 10 + new_str.at(pos++) - '0';
+	while (s.peek() != EOF) {
+		double coefficient = 1;
+		int power = 0;
+		char sign;
+		s >> sign;
+		if (s.peek() != 'x') {
+			s >> coefficient;
 		}
-		coeffient *= (sign == '+' ? 1 : -1);
-		// Very ugly!
-		if (pos != new_str.length() && new_str.at(pos) == 'x') {
-			pos += 1;
-			if (pos != new_str.length() && new_str.at(pos) == '^') {
-				pos += 1;
-				while (pos != new_str.length()&& (isnumber(new_str.at(pos)) != 0)){
-					power = power * 10 + new_str.at(pos++) - '0';
-				}
-			} else {
-				power = 1;
-			}
+		coefficient *= (sign == '+' ? 1 : -1);
+		if (!s || s.peek() != 'x') {
+			poly_insert(p, {coefficient, power});
+			continue;
 		}
-		poly_insert(p, {coeffient, power});
+		power = 1;
+		s.ignore(1);
+		if (!s || s.peek() != '^') {
+			poly_insert(p, {coefficient, power});
+			continue;
+		}
+		s.ignore(1);
+		s >> power;
+		poly_insert(p, {coefficient, power});
 	}
 	return p;
 }
 
 Polynomial real_add(Polynomial a, Polynomial b, int is_add) {
-	node *pa = a.sentinel->next, *pb = b.sentinel->next;
-	Polynomial result = polynomial("0");
-	while (pa != a.sentinel && pb != b.sentinel) {
-		if (pa->item.power >= pb->item.power) {
-			while (pa != a.sentinel && pa->item.power >= pb->item.power) {
-				// TODO(fandahao1): add float support
-				int c = pa->item.coefficient, p = pa->item.power;
-				// TODO(fandahao1): Don't use poly_insert
-				poly_insert(result, {c, p});
-				pa = pa->next;
+	Term pa = first(a), pb = first(b);
+	Polynomial result = polynomial("");
+	while (pa != head(a) && pb != head(b)) {
+		if (power(pa) > power(pb)) {
+			while (pa != head(a) && power(pa) > power(pb)) {
+				double c = coefficient(pa);
+				int p = power(pa);
+				insert_term_at(result, head(result), term(c, p));
+				pa = next(pa);
 			}
 		} else {
-			while (pb != b.sentinel && pb->item.power >= pa->item.power) {
-				int c = pb->item.coefficient * is_add, p = pb->item.power;
-				poly_insert(result, {c, p});
-				pb = pb->next;
+			while (pb != head(b) && power(pb) > power(pa)) {
+				double c = coefficient(pb);
+				int p = power(pb);
+				insert_term_at(result, head(result), term(c, p));
+				pb = next(pb);
 			}
 		}
+		if (pa != head(a) && pb != head(b) && power(pa) == power(pb)) {
+			double c = coefficient(pa) + coefficient(pb)*is_add;
+			int p = power(pb);
+			insert_term_at(result, head(result), term(c, p));
+			pa = next(pa);
+			pb = next(pb);
+		}
 	}
-	while (pa != a.sentinel) {
-		int c = pa->item.coefficient, p = pa->item.power;
-		poly_insert(result, {c, p});
-		pa = pa->next;
+	while (pa != head(a)) {
+		double c = coefficient(pa);
+		int	p = power(pa);
+		insert_term_at(result, head(result), term(c, p));
+		pa = next(pa);
 	}
-	while (pb != b.sentinel) {
-		int c = pb->item.coefficient * is_add, p = pb->item.power;
-		poly_insert(result, {c, p});
-		pb = pb->next;
+	while (pb != head(b)) {
+		double c = coefficient(pb) * is_add;
+		int	p = power(pb);
+		insert_term_at(result, head(result), term(c, p));
+		pb = next(pb);
 	}
-	return result;
+	return filtered_poly(result);
 }
 
 Polynomial add(Polynomial a, Polynomial b) {
@@ -108,11 +140,13 @@ Polynomial sub(Polynomial a, Polynomial b) {
 }
 
 Polynomial one_mul_n(Item e, Polynomial b) {
-	int c = e.coefficient, p = e.power;
+	double c = e.coefficient;
+	int	p = e.power;
 	node *pb = b.sentinel->next;
-	Polynomial result = polynomial("0");
+	Polynomial result = polynomial("");
 	while (pb != b.sentinel) {
-		int bc = pb->item.coefficient, bp = pb->item.power;
+		double bc = pb->item.coefficient;
+		int	bp = pb->item.power;
 		poly_insert(result, {bc * c, bp + p});
 		pb = pb->next;
 	}
@@ -120,22 +154,26 @@ Polynomial one_mul_n(Item e, Polynomial b) {
 }
 
 Polynomial mul(Polynomial a, Polynomial b) {
-	Polynomial result = polynomial("0");
-	node *p = a.sentinel->next;
-	while (p != a.sentinel) {
+	Polynomial result = polynomial("");
+	Term p = first(a);
+	while (p != head(a)) {
 		result = add(result, one_mul_n(p->item, b));
-		p = p->next;
+		p = next(p);
 	}
 	return result;
 }
 
 std::string make_term(node *p) {
-	int c = p->item.coefficient, po = p->item.power;
+	double c = coefficient(p);
+	std::ostringstream out;
+    out.precision(1);
+    out << std::fixed << c;
+	int	po = power(p);
 	if (po == 0) {
-		return std::to_string(c);
+		return out.str();
 	}
-	std::string c_part = (abs(c) ==1 ? (c > 0 ? "" : "-")
-		   							: std::to_string(c));
+	std::string c_part = (fabs(c) ==1 ? (c > 0 ? "" : "-")
+		   							: out.str());
 	std::string p_part;
 	if (po != 1) {
 		p_part = "^" + std::to_string(po);
@@ -147,15 +185,30 @@ std::string make_term(node *p) {
 }
 
 void print_polynomial(Polynomial p) {
-	node *q = p.sentinel->next;
+	Term q = first(p);
 	std::cout << make_term(q);
-	q = q->next;
-	while (q != p.sentinel) {
+	q = next(q);
+	while (q != head(p)) {
 		if (q->item.coefficient >= 0) {
 			std::cout << "+";
 		}
 		std::cout << make_term(q);
-		q = q->next;
+		q = next(q);
 	}
 	std::cout << std::endl;
+}
+
+bool equals(Polynomial a, Polynomial b) {
+	if (size(a) != size(b)) {
+		return false;
+	}
+	Term ta = first(a), tb = first(b);
+	while (ta != head(a)) {
+		if (coefficient(ta) != coefficient(tb) || power(ta) != power(tb)) {
+			return false;
+		}
+		ta = next(ta);
+		tb = next(tb);
+	}
+	return true;
 }
